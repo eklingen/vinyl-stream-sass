@@ -36,7 +36,7 @@ optionalDependencies": {
 ```
 
 3. Run `yarn` or `npm` to install it.
-4. Pass the `experimentalBinary: true` option.
+4. Pass the `experimentalTryBinary: true` option.
 
 ```
 sassWrapper({
@@ -44,8 +44,7 @@ sassWrapper({
 })
 ```
 
-This package will try to use the binary if at all possible. When that fails, it will run the normal `sass` package.
-And yes, it also fully supports sourcemaps in this mode.
+This package will try to use the binary if at all possible. When that fails, it will run the normal `sass` package. And yes, it also fully supports sourcemaps in this mode.
 
 ## Dependencies
 

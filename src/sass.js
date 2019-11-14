@@ -14,7 +14,7 @@ const { Transform } = require('stream')
 
 const BINARY_PATH = './node_modules/binaries__dart-sass/sass'
 const DEFAULT_OPTIONS = {
-  experimentalTryBinary: true
+  experimentalTryBinary: false
 }
 
 function runBinarySass (options) {
