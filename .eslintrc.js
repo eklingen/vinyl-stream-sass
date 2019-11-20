@@ -172,12 +172,6 @@ let rules = {
   'yoda': ['error', 'never'],
 }
 
-// eslint-plugin-standard
-plugins.push('standard')
-rules = {...rules, ...{
-  'standard/no-callback-literal': 'error',
-}}
-
 // eslint-plugin-smells
 plugins.push('smells')
 rules = {...rules, ...{
