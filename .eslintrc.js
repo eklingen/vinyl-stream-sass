@@ -27,6 +27,9 @@ const extendsRulesets = [
 ]
 
 let rules = {
+  // Fix for: https://github.com/eslint/eslint/issues/11899
+  'require-atomic-updates': 0,
+
   // configuration lifted from eslint-config-standard
   'accessor-pairs': 'error',
   'array-bracket-spacing': ['error', 'never'],
