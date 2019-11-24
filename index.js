@@ -6,7 +6,7 @@
 // You can disable this behavior by setting `options.tryBinary: false`.
 // Note: Due to async overhead, this might be slower on small files.
 
-const { access, chmod } = require('fs').promises
+const { chmod } = require('fs').promises
 const { basename, dirname, extname, join, relative } = require('path')
 const { exec } = require('child_process')
 const { platform, arch } = require('os')
