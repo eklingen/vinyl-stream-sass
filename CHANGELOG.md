@@ -1,6 +1,7 @@
 
 # Changelog
 
+v1.0.5 - Fixed issues with source maps. Fixed issue with binaries.
 v1.0.4 - Embedded the `sass` binary. No longer uses sync methods.
 v1.0.3 - Internal refactoring
 v1.0.2 - (chore) Upgraded `sass` dependency

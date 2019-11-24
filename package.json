@@ -1,6 +1,6 @@
 {
   "name": "@eklingen/vinyl-stream-sass",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Small vinyl-stream wrapper -aka Gulp plugin- for dart-sass.",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "sass": "^1.23.7",
-    "vinyl-sourcemaps-apply": "^0.2.1"
+    "source-map": "^0.7.3"
   },
   "devDependencies": {
     "eslint": "^6.7.0",

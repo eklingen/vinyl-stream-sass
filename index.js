@@ -6,6 +6,7 @@
 // You can disable this behavior by setting `options.tryBinary: false`.
 // Note: Due to async overhead, this might be slower on small files.
 
+const { access, chmod } = require('fs').promises
 const { basename, dirname, extname, join, relative } = require('path')
 const { exec } = require('child_process')
 const { platform, arch } = require('os')
@@ -17,10 +18,27 @@ const DEFAULT_OPTIONS = {
   tryBinary: true,
 
   sass: {
-    outputStyleCompressed: false,
-    emitCharset: true,
-    emitErrorCss: true,
-    emitSourceMap: true
+    outputStyle: 'compressed', // or 'extended'
+    charset: true,
+    errorCss: true,
+    sourceMap: true,
+    sourceMapContents: true
+  }
+}
+
+async function chmodBinaries () {
+  if (platform() === 'win32') {
+    return
+  }
+
+  try {
+    const path1 = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/sass`)
+    const path2 = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/src/dart`)
+
+    await access(path1, 1, async error => !error || chmod(path1, 0o744))
+    await access(path2, 1, async error => !error || chmod(path2, 0o744))
+  } catch (e) {
+    //
   }
 }
 
@@ -28,6 +46,8 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 8 * 1024 *
   if (!binary) {
     return
   }
+
+  await chmodBinaries()
 
   return new Promise((resolve, reject) => {
     try {
@@ -52,39 +72,26 @@ function binarySassArgs (options = {}) {
 
   options.includePaths.forEach(path => args.push(`--load-path="${path}"`))
 
-  if (options.outputStyleCompressed) {
-    args.push('--style="compressed"')
-  } else {
-    args.push('--style="expanded"')
-  }
+  args.push(`--style="${options.outputStyle}"`)
+  args.push(options.charset ? '--charset' : '--no-charset')
+  args.push(options.errorCss ? '--error-css' : '--no-error-css')
 
-  if (options.emitCharset) {
-    args.push('--charset')
-  } else {
-    args.push('--no-charset')
-  }
-
-  if (options.emitErrorCss) {
-    args.push('--error-css')
-  } else {
-    args.push('--no-error-css')
-  }
-
-  if (options.emitSourceMap) {
+  if (options.sourceMap) {
     args.push('--source-map')
     args.push('--embed-source-map')
-    args.push('--embed-sources')
     args.push('--source-map-urls="absolute"')
-  } else {
-    args.push('--no-source-map')
+  }
+
+  if (options.sourceMapContents) {
+    args.push('--embed-sources')
   }
 
   return args
 }
 
 function dartSassWrapper (options = {}) {
+  const { SourceMapConsumer, SourceMapGenerator } = require('source-map')
   const { renderSync } = require('sass')
-  const applySourceMap = require('vinyl-sourcemaps-apply')
 
   options = { ...DEFAULT_OPTIONS, ...options }
 
@@ -102,15 +109,14 @@ function dartSassWrapper (options = {}) {
     options.includePaths = (typeof options.includePaths === 'string') ? [options.includePaths] : []
     options.includePaths.unshift(dirname(file.path))
 
-    let result
+    let result = {}
 
     try {
       if (options.tryBinary) {
-        const data = await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass, includePaths: options.includePaths })]).toString('utf8')
+        const data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass, includePaths: options.includePaths })])).toString('utf-8')
 
         if (data) {
           const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
-          const result = {}
 
           if (~index) {
             const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)\*\/)/i.exec(data)
@@ -124,12 +130,6 @@ function dartSassWrapper (options = {}) {
       }
 
       if (!result) {
-        if (file.sourceMap) {
-          options.sourceMap = file.path
-          options.omitSourceMapUrl = true
-          options.sourceMapContents = true
-        }
-
         result = renderSync(options)
       }
 
@@ -145,12 +145,20 @@ function dartSassWrapper (options = {}) {
     }
 
     if (result.map) {
-      const sassMap = JSON.parse(result.map.toString())
+      const sourceMap = JSON.parse(result.map.toString('utf8'))
 
-      sassMap.sources = sassMap.sources.map((source, index) => ~source.indexOf('file://') ? relative(file.base, source.substr(7)) : source) // Convert absolute to relative paths
-      sassMap.file = join(dirname(file.relative), basename(file.relative, extname(file.relative)) + '.css')
+      sourceMap.sources = sourceMap.sources.map((source, index) => ~source.indexOf('file://') ? relative(file.base, source.substr(7)) : source) // Convert absolute to relative paths
+      sourceMap.file = join(dirname(file.relative), basename(file.relative, extname(file.relative)) + '.css')
 
-      applySourceMap(file, sassMap)
+      if (file.sourceMap && (typeof file.sourceMap === 'string' || file.sourceMap instanceof String)) {
+        file.sourceMap = JSON.parse(file.sourceMap)
+      }
+
+      if (file.sourceMap && file.sourceMap.mappings !== '') {
+        file.sourceMap = JSON.parse(SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap)).applySourceMap(new SourceMapConsumer(file.sourceMap)).toString().applySourceMap(new SourceMapConsumer(file.sourceMap)).toString())
+      } else {
+        file.sourceMap = sourceMap
+      }
     }
 
     file.contents = result.css
