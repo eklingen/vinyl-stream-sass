@@ -46,7 +46,7 @@ sassWrapper({
 
 ## Dependencies
 
-This package requires ["sass"](https://www.npmjs.com/package/sass) and ["vinyl-sourcemaps-apply"](https://www.npmjs.com/package/vinyl-sourcemaps-apply).
+This package requires ["sass"](https://www.npmjs.com/package/sass) and ["source-map"](https://www.npmjs.com/package/source-map).
 
 ---
 
