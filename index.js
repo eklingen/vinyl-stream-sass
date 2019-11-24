@@ -12,7 +12,7 @@ const { exec } = require('child_process')
 const { platform, arch } = require('os')
 const { Transform, Readable } = require('stream')
 
-const sassBinary = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/sass${platform() === 'win32' ? '.bat' : ''}`)
+const sassBinary = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/dart${platform() === 'win32' ? '.exe' : ''}`)
 
 const DEFAULT_OPTIONS = {
   tryBinary: true,
@@ -26,32 +26,18 @@ const DEFAULT_OPTIONS = {
   }
 }
 
-async function chmodBinaries () {
-  if (platform() === 'win32') {
-    return
-  }
-
-  try {
-    const path1 = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/sass`)
-    const path2 = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/src/dart`)
-
-    await access(path1, 1, async error => !error || chmod(path1, 0o744))
-    await access(path2, 1, async error => !error || chmod(path2, 0o744))
-  } catch (e) {
-    //
-  }
-}
-
 async function runBinary (buffer, binary = '', args = [], maxBuffer = 8 * 1024 * 1024, encoding = null) {
   if (!binary) {
     return
   }
 
-  await chmodBinaries()
-
   return new Promise((resolve, reject) => {
     try {
-      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => resolve(err ? stderr : stdout))
+      if (platform() !== 'win32') {
+        chmod(binary, 0o744)
+      }
+
+      const child = exec(`${binary} ${binary.replace('/dart', '/sass.dart.snapshot')} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => err ? reject(stderr) : resolve(stdout))
       child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
 
       const stdin = new Readable({ encoding, maxBuffer })
@@ -155,7 +141,9 @@ function dartSassWrapper (options = {}) {
       }
 
       if (file.sourceMap && file.sourceMap.mappings !== '') {
-        file.sourceMap = JSON.parse(SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap)).applySourceMap(new SourceMapConsumer(file.sourceMap)).toString().applySourceMap(new SourceMapConsumer(file.sourceMap)).toString())
+        const generator = (SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap)))
+        generator.applySourceMap(new SourceMapConsumer(file.sourceMap))
+        file.sourceMap = JSON.parse(generator.toString())
       } else {
         file.sourceMap = sourceMap
       }
