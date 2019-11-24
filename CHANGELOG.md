@@ -1,6 +1,7 @@
 
 # Changelog
 
+v1.1.0 - Pinned `source-map` version to `~0.6.1`
 v1.0.9 - Fixed OS-X snapshot loading
 v1.0.8 - Publish to test `package.json` `bin` property (2).
 v1.0.7 - Publish to test `package.json` `bin` property (1).
