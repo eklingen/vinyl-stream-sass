@@ -1,38 +1,85 @@
 // Small vinyl-stream wrapper - aka Gulp plugin - for sass (dart-sass).
 // Fully supports source maps.
 //
-// Has an experimental hyperfast path. To use it:
-// - Check the latest dart-sass releases on: https://github.com/sass/dart-sass/releases
-// - Add the desired version for your OS as an optional dependency to your package.json:
-//     "optionalDependencies": { "binaries__dart-sass": "https://github.com/sass/dart-sass/releases/download/1.23.3/dart-sass-1.23.3-macos-x64.tar.gz" }
-// - The run `yarn` or `npm` to install it. This package will try to use the binary if possible, unless `options.tryBinary` is false.
+// For more speed (faster then libsassc in most cases!), it tries to use a binary.
+// If it can't find one, or it doesn't work, it will try the `sass` javascript package.
+// You can disable this behavior by setting `options.tryBinary: false`.
+// Note: Due to async overhead, this might be slower on small files.
 
 const { basename, dirname, extname, join, relative } = require('path')
-const { execSync } = require('child_process')
-const { existsSync } = require('fs')
-const { Transform } = require('stream')
+const { exec } = require('child_process')
+const { platform, arch } = require('os')
+const { Transform, Readable } = require('stream')
 
-const BINARY_PATH = './node_modules/binaries__dart-sass/sass'
+const sassBinary = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/sass${platform() === 'win32' ? '.bat' : ''}`)
+
 const DEFAULT_OPTIONS = {
-  experimentalTryBinary: false
+  tryBinary: true,
+
+  sass: {
+    outputStyleCompressed: false,
+    emitCharset: true,
+    emitErrorCss: true,
+    emitSourceMap: true
+  }
 }
 
-function runBinarySass (options) {
-  const dir = dirname(relative(process.cwd(), options.file))
-  const data = execSync(`${BINARY_PATH} --stdin --load-path="${dir}" --charset --embed-source-map --embed-sources --source-map-urls="absolute" --error-css`, { env: process.env, cwd: process.cwd(), input: options.data, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true }).toString()
-  const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
-  const result = {}
-
-  if (~index) {
-    const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)\*\/)/i.exec(data)
-
-    result.css = Buffer.from(data.substr(0, index))
-    result.map = Buffer.from(decodeURIComponent(inner))
-  } else {
-    result.css = Buffer.from(data)
+async function runBinary (buffer, binary = '', args = [], maxBuffer = 8 * 1024 * 1024, encoding = null) {
+  if (!binary) {
+    return
   }
 
-  return result
+  return new Promise((resolve, reject) => {
+    try {
+      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => resolve(err ? stderr : stdout))
+      child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
+
+      const stdin = new Readable({ encoding, maxBuffer })
+      stdin.push(buffer)
+      stdin.push(null)
+      stdin.pipe(child.stdin)
+    } catch (error) {
+      console.log('ERROR', error)
+      reject(error)
+    }
+  })
+}
+
+function binarySassArgs (options = {}) {
+  options = { ...DEFAULT_OPTIONS.sass, ...options }
+
+  const args = ['--stdin']
+
+  options.includePaths.forEach(path => args.push(`--load-path="${path}"`))
+
+  if (options.outputStyleCompressed) {
+    args.push('--style="compressed"')
+  } else {
+    args.push('--style="expanded"')
+  }
+
+  if (options.emitCharset) {
+    args.push('--charset')
+  } else {
+    args.push('--no-charset')
+  }
+
+  if (options.emitErrorCss) {
+    args.push('--error-css')
+  } else {
+    args.push('--no-error-css')
+  }
+
+  if (options.emitSourceMap) {
+    args.push('--source-map')
+    args.push('--embed-source-map')
+    args.push('--embed-sources')
+    args.push('--source-map-urls="absolute"')
+  } else {
+    args.push('--no-source-map')
+  }
+
+  return args
 }
 
 function dartSassWrapper (options = {}) {
@@ -40,9 +87,8 @@ function dartSassWrapper (options = {}) {
   const applySourceMap = require('vinyl-sourcemaps-apply')
 
   options = { ...DEFAULT_OPTIONS, ...options }
-  options.experimentalTryBinary = options.experimentalTryBinary && existsSync(BINARY_PATH)
 
-  function transform (file, encoding, callback) {
+  async function transform (file, encoding, callback) {
     if (basename(file.path).indexOf('_') === 0) {
       return callback() // Sass convention says files beginning with an underscore should be used via @import only, so remove the file from the stream
     }
@@ -59,8 +105,22 @@ function dartSassWrapper (options = {}) {
     let result
 
     try {
-      if (options.experimentalTryBinary) {
-        result = runBinarySass(options)
+      if (options.tryBinary) {
+        const data = await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass, includePaths: options.includePaths })]).toString('utf8')
+
+        if (data) {
+          const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
+          const result = {}
+
+          if (~index) {
+            const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)\*\/)/i.exec(data)
+
+            result.css = Buffer.from(data.substr(0, index))
+            result.map = Buffer.from(decodeURIComponent(inner))
+          } else {
+            result.css = Buffer.from(data)
+          }
+        }
       }
 
       if (!result) {
