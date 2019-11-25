@@ -91,7 +91,6 @@ function dartSassWrapper (options = {}) {
       return callback(null, file)
     }
 
-    options = { ...options, ...{ data: file.contents.toString(), file: file.path } }
     options.sass.includePaths.unshift(dirname(file.path))
 
     let result = {}
@@ -106,20 +105,12 @@ function dartSassWrapper (options = {}) {
           if (~index) {
             const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)(\*\/[\s\s]*)$)/i.exec(data)
 
-            result.css = Buffer.from(data.substr(0, index))
+            result.css = Buffer.from(data.substr(0, index).trimEnd())
             result.map = Buffer.from(decodeURIComponent(inner))
           } else {
             result.css = Buffer.from(data)
           }
         }
-      }
-
-      if (!result) {
-        result = renderSync(options)
-      }
-
-      if (!result) {
-        return callback(new Error('Sass returned nothing.'))
       }
     } catch (error) {
       error.relativePath = relative(process.cwd(), (error.file === 'stdin' ? file.path : error.file) || file.path)
@@ -127,6 +118,15 @@ function dartSassWrapper (options = {}) {
       error.formatted = `\x1b[31m${error.message}\x1b[0m`
 
       return callback(new Error(error))
+    }
+
+    if (!result.css) {
+      options.sass = { ...options.sass, data: file.contents.toString(), file: file.path, outFile: options.sass.sourceMap ? 'main.css' : false }
+      result = renderSync(options.sass)
+    }
+
+    if (!result.css) {
+      return callback(new Error('Sass returned nothing.'))
     }
 
     if (result.map) {
@@ -148,7 +148,7 @@ function dartSassWrapper (options = {}) {
       }
     }
 
-    file.contents = result.css
+    file.contents = Buffer.from(result.css.toString('utf8').replace(`\n\n/*# sourceMappingURL=${basename(file.path, extname(file.path))}.css.map */`, ''))
     file.path = join(dirname(file.path), basename(file.path, extname(file.path)) + '.css')
 
     return callback(null, file)
