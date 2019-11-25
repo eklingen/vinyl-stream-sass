@@ -22,11 +22,12 @@ const DEFAULT_OPTIONS = {
     charset: true,
     errorCss: true,
     sourceMap: true,
-    sourceMapContents: true
+    sourceMapContents: true,
+    includePaths: []
   }
 }
 
-async function runBinary (buffer, binary = '', args = [], maxBuffer = 8 * 1024 * 1024, encoding = null) {
+async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 * 1024, encoding = null) {
   if (!binary) {
     return
   }
@@ -45,15 +46,12 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 8 * 1024 *
       stdin.push(null)
       stdin.pipe(child.stdin)
     } catch (error) {
-      console.log('ERROR', error)
       reject(error)
     }
   })
 }
 
 function binarySassArgs (options = {}) {
-  options = { ...DEFAULT_OPTIONS.sass, ...options }
-
   const args = ['--stdin']
 
   options.includePaths.forEach(path => args.push(`--load-path="${path}"`))
@@ -80,6 +78,8 @@ function dartSassWrapper (options = {}) {
   const { renderSync } = require('sass')
 
   options = { ...DEFAULT_OPTIONS, ...options }
+  options.sass = { ...DEFAULT_OPTIONS.sass, ...options.sass }
+  options.sass.includePaths = [...DEFAULT_OPTIONS.sass.includePaths, ...options.sass.includePaths]
 
   async function transform (file, encoding, callback) {
     if (basename(file.path).indexOf('_') === 0) {
@@ -91,21 +91,20 @@ function dartSassWrapper (options = {}) {
       return callback(null, file)
     }
 
-    options = ({ ...options, ...{ data: file.contents.toString(), file: file.path } })
-    options.includePaths = (typeof options.includePaths === 'string') ? [options.includePaths] : []
-    options.includePaths.unshift(dirname(file.path))
+    options = { ...options, ...{ data: file.contents.toString(), file: file.path } }
+    options.sass.includePaths.unshift(dirname(file.path))
 
     let result = {}
 
     try {
       if (options.tryBinary) {
-        const data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass, includePaths: options.includePaths })])).toString('utf-8')
+        const data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })])).toString('utf-8')
 
         if (data) {
           const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
 
           if (~index) {
-            const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)\*\/)/i.exec(data)
+            const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)(\*\/[\s\s]*)$)/i.exec(data)
 
             result.css = Buffer.from(data.substr(0, index))
             result.map = Buffer.from(decodeURIComponent(inner))

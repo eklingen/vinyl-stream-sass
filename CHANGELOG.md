@@ -1,6 +1,8 @@
 
 # Changelog
 
+v1.2.0 - Added `node_modules` to `options.includePaths` by default.
+v1.1.1 - Fixed issue with multiline comments in sourcemaps.
 v1.1.0 - Pinned `source-map` version to `~0.6.1`
 v1.0.9 - Fixed OS-X snapshot loading
 v1.0.8 - Publish to test `package.json` `bin` property (2).
