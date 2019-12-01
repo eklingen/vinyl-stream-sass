@@ -1,5 +1,5 @@
 
-# Small vinyl-stream wrapper -aka Gulp plugin- for sass (dart-sass).
+# Small vinyl-stream wrapper -aka Gulp plugin- for sass (dart-sass)
 
 Run Sass within your streams. This fully supports source maps.
 
@@ -11,7 +11,7 @@ Run Sass within your streams. This fully supports source maps.
 
 ## Usage
 
-```
+```javascript
 const sassWrapper = require('@eklingen/vinyl-stream-sass')
 stream.pipe(sassWrapper())
 ```
@@ -24,7 +24,7 @@ There are a few options.
 
 Try to compile via the `sass` binary. Default is `true`. It tries to use the included binary. With larger `.scss` files, this method is faster. However, with smaller files, the async overhead might make it slower. In that case, set `tryBinary: false`. If it can't find the binary for the current architecture, or if there is no result returned, it will try the `sass` javascript package as a fallback.
 
-```
+```javascript
 sassWrapper({
   tryBinary: true
 })
@@ -34,7 +34,7 @@ sassWrapper({
 
 These options are passed verbatim into `sass`. For more information, see the ["sass"](https://www.npmjs.com/package/sass) documentation.
 
-```
+```javascript
 sassWrapper({
   outputStyle: 'compressed', // or 'extended'
   charset: true,

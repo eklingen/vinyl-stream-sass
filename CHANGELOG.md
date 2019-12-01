@@ -1,6 +1,7 @@
 
 # Changelog
 
+v1.3.0 - First release with a tag
 v1.2.1 - Normalized output between binary and non-binary for better comparison
 v1.2.0 - Added `node_modules` to `options.includePaths` by default
 v1.1.1 - Fixed issue with multiline comments in sourcemaps

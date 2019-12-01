@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/eklingen/vinyl-stream-sass.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Elco Klingen",
   "license": "MIT",
   "homepage": "https://github.com/eklingen/vinyl-stream-sass#readme",
