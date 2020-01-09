@@ -12,7 +12,7 @@ const { exec } = require('child_process')
 const { platform, arch } = require('os')
 const { Transform, Readable } = require('stream')
 
-const sassBinary = join(module.path, `/vendor/sass-1.23.7/${platform()}-${arch()}/dart${platform() === 'win32' ? '.exe' : ''}`)
+const sassBinary = join(module.path, `/vendor/sass/${platform()}-${arch()}/dart${platform() === 'win32' ? '.exe' : ''}`)
 
 const DEFAULT_OPTIONS = {
   tryBinary: true,
