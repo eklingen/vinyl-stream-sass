@@ -1,6 +1,7 @@
 
 # Changelog
 
+v1.3.4 - Set `sass` package as optional
 v1.3.3 - Upgrade dependencies
 v1.3.2 - Upgrade dependencies
 v1.3.1 - Upgrade dependencies

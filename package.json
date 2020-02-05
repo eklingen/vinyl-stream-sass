@@ -31,8 +31,10 @@
     "test": "echo '** TODO: Write tests! **'; echo 'Linting...'; eslint index.js --fix;"
   },
   "dependencies": {
-    "sass": "^1.25.0",
     "source-map": "~0.6.1"
+  },
+  "optionalDependencies": {
+    "sass": "^1.25.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
