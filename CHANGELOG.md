@@ -1,6 +1,7 @@
 
 # Changelog
 
+v1.3.6 - Upgrade dependencies
 v1.3.5 - Updated development node version to 12.16.0
 v1.3.4 - Set `sass` package as optional
 v1.3.3 - Upgrade dependencies
