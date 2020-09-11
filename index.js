@@ -122,11 +122,16 @@ function dartSassWrapper (options = {}) {
 
     if (!result.css) {
       options.sass = { ...options.sass, data: file.contents.toString(), file: file.path, outFile: options.sass.sourceMap ? 'main.css' : false }
-      result = renderSync(options.sass)
+
+      try {
+        result = renderSync(options.sass)
+      } catch (error) {
+        return callback(error)
+      }
     }
 
     if (!result.css) {
-      return callback(new Error('Sass returned nothing.'))
+      return callback(new Error('Stylesheet not generated.'))
     }
 
     if (result.map) {
