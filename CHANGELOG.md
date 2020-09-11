@@ -1,8 +1,10 @@
 
 # Changelog
 
+v2.0.0 - Upgraded Sass from 1.26.8 to 1.26.10
+       - Removed Win32 binary due to WSL maturity
 v1.4.0 - Fixed uncaught error when not using binary
-v1.3.9 - Reverted inadvertend source-map upgrade
+v1.3.9 - Reverted inadvertent source-map upgrade
 v1.3.8 - Upgrade dependencies
 v1.3.7 - Upgrade dependencies
 v1.3.6 - Upgrade dependencies

@@ -12,7 +12,7 @@ const { exec } = require('child_process')
 const { platform, arch } = require('os')
 const { Transform, Readable } = require('stream')
 
-const sassBinary = join(module.path, `/vendor/sass/${platform()}-${arch()}/dart${platform() === 'win32' ? '.exe' : ''}`)
+const sassBinary = join(module.path, `/vendor/sass/${platform()}-${arch()}/dart`)
 
 const DEFAULT_OPTIONS = {
   tryBinary: true,
@@ -34,9 +34,7 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 
 
   return new Promise((resolve, reject) => {
     try {
-      if (platform() !== 'win32') {
-        chmod(binary, 0o744)
-      }
+      chmod(binary, 0o744)
 
       const child = exec(`${binary} ${binary.replace('/dart', '/sass.dart.snapshot')} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => err ? reject(stderr) : resolve(stdout))
       child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
