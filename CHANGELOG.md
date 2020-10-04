@@ -2,6 +2,7 @@
 # Changelog
 (NOTE: Accidentally published 3.0.0 in the past - that version can never be reused. Learned my lesson.)
 
+v2.0.3 - Upgraded source-map (2/2)
 v2.0.2 - Upgraded source-map
 v2.0.1 - Upgrades Sass to v1.26.11
 v2.0.0 - Upgraded Sass from 1.26.8 to 1.26.10
