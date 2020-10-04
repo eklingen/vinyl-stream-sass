@@ -143,9 +143,16 @@ function dartSassWrapper (options = {}) {
       }
 
       if (file.sourceMap && file.sourceMap.mappings !== '') {
-        const generator = (SourceMapGenerator.fromSourceMap(new SourceMapConsumer(sourceMap)))
-        generator.applySourceMap(new SourceMapConsumer(file.sourceMap))
+        // TODO: There is probably a much better way to merge 2 sourcemaps. https://github.com/mozilla/source-map
+        const consumer1 = await new SourceMapConsumer(sourceMap)
+        const consumer2 = await new SourceMapConsumer(file.sourceMap)
+        const generator = SourceMapGenerator.fromSourceMap(consumer1)
+
+        generator.applySourceMap(consumer2)
         file.sourceMap = JSON.parse(generator.toString())
+
+        consumer1.destroy()
+        consumer2.destroy()
       } else {
         file.sourceMap = sourceMap
       }
