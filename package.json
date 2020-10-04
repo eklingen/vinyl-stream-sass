@@ -34,7 +34,7 @@
     "source-map": "0.6.1"
   },
   "optionalDependencies": {
-    "sass": "^1.26.10"
+    "sass": "^1.26.11"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

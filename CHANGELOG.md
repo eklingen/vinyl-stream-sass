@@ -1,6 +1,7 @@
 
 # Changelog
 
+v2.0.1 - Upgrades Sass to v1.26.11
 v2.0.0 - Upgraded Sass from 1.26.8 to 1.26.10
        - Removed Win32 binary due to WSL maturity
 v1.4.0 - Fixed uncaught error when not using binary
