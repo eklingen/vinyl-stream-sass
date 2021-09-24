@@ -1,6 +1,7 @@
 
 # Changelog
 
+v4.0.1 - Upgrade dependencies
 v4.0.0 - Upgrade node to v14 LTS
 v3.0.0 - (ACCIDENTAL PUBLISH - DON'T REUSE)
 v2.0.3 - Upgraded source-map (2/2)

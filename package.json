@@ -34,13 +34,13 @@
     "source-map": "0.7.3"
   },
   "optionalDependencies": {
-    "sass": "^1.26.11"
+    "sass": "^1.42.1"
   },
   "devDependencies": {
-    "eslint": "^7.2.0",
+    "eslint": "^7.32.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
-    "eslint-plugin-simple-import-sort": "^5.0.3",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-smells": "^1.0.1"
   }
 }

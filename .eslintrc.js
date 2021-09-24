@@ -8,8 +8,8 @@ const parserOptions = {
   ecmaFeatures: {
     globalReturn: false,
     impliedStrict: true,
-    jsx: false,
-  },
+    jsx: false
+  }
 }
 
 const globals = {}
@@ -17,7 +17,7 @@ const globals = {}
 const env = {
   browser: false,
   node: true,
-  es6: true,
+  es6: true
 }
 
 const plugins = []
@@ -33,24 +33,24 @@ let rules = {
   // configuration lifted from eslint-config-standard
   'accessor-pairs': 'error',
   'array-bracket-spacing': ['error', 'never'],
-  'arrow-spacing': ['error', { 'before': true, 'after': true }],
+  'arrow-spacing': ['error', { before: true, after: true }],
   'block-spacing': ['error', 'always'],
-  'brace-style': ['error', '1tbs', { 'allowSingleLine': true }],
-  'camelcase': ['error', { 'properties': 'never' }],
-  'comma-dangle': ['error', {arrays: 'never', objects: 'never', imports: 'never', exports: 'never', functions: 'never' }],
+  'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+  camelcase: ['error', { properties: 'never' }],
+  'comma-dangle': ['error', { arrays: 'never', objects: 'never', imports: 'never', exports: 'never', functions: 'never' }],
   'comma-spacing': ['error', { before: false, after: true }],
   'comma-style': ['error', 'last'],
   'computed-property-spacing': ['error', 'never'],
   'constructor-super': 'error',
-  'curly': ['error', 'multi-line'],
+  curly: ['error', 'multi-line'],
   'dot-location': ['error', 'property'],
   'dot-notation': ['error', { allowKeywords: true }],
   'eol-last': 'error',
-  'eqeqeq': ['error', 'always', { null: 'ignore' }],
+  eqeqeq: ['error', 'always', { null: 'ignore' }],
   'func-call-spacing': ['error', 'never'],
   'generator-star-spacing': ['error', { before: true, after: true }],
-  'handle-callback-err': ['error', '^(err|error)$' ],
-  'indent': ['error', 2, { 'SwitchCase': 1, 'VariableDeclarator': 1, 'outerIIFEBody': 1, 'MemberExpression': 1, 'FunctionDeclaration': { parameters: 1, body: 1 }, 'FunctionExpression': { parameters: 1, body: 1 }, 'CallExpression': { arguments: 1 }, 'ArrayExpression': 1, 'ObjectExpression': 1, 'ImportDeclaration': 1, 'flatTernaryExpressions': false, 'ignoreComments': false, 'ignoredNodes': ['TemplateLiteral *'] }],
+  'handle-callback-err': ['error', '^(err|error)$'],
+  indent: ['error', 2, { SwitchCase: 1, VariableDeclarator: 1, outerIIFEBody: 1, MemberExpression: 1, FunctionDeclaration: { parameters: 1, body: 1 }, FunctionExpression: { parameters: 1, body: 1 }, CallExpression: { arguments: 1 }, ArrayExpression: 1, ObjectExpression: 1, ImportDeclaration: 1, flatTernaryExpressions: false, ignoreComments: false, ignoredNodes: ['TemplateLiteral *'] }],
   'key-spacing': ['error', { beforeColon: false, afterColon: true }],
   'keyword-spacing': ['error', { before: true, after: true }],
   'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
@@ -94,7 +94,7 @@ let rules = {
   'no-misleading-character-class': 'error',
   'no-prototype-builtins': 'error',
   'no-useless-catch': 'error',
-  'no-mixed-operators': ['error', { 'groups': [['==', '!=', '===', '!==', '>', '>=', '<', '<='], ['&&', '||'], ['in', 'instanceof']], 'allowSamePrecedence': true }],
+  'no-mixed-operators': ['error', { groups: [['==', '!=', '===', '!==', '>', '>=', '<', '<='], ['&&', '||'], ['in', 'instanceof']], allowSamePrecedence: true }],
   'no-mixed-spaces-and-tabs': 'error',
   'no-multi-spaces': 'error',
   'no-multi-str': 'error',
@@ -151,19 +151,19 @@ let rules = {
   'one-var': ['error', { initialized: 'never' }],
   'operator-linebreak': ['error', 'after', { overrides: { '?': 'before', ':': 'before', '|>': 'before' } }],
   'padded-blocks': ['error', { blocks: 'never', switches: 'never', classes: 'never' }],
-  'prefer-const': ['error', {destructuring: 'all'}],
+  'prefer-const': ['error', { destructuring: 'all' }],
   'prefer-promise-reject-errors': 'error',
   'quote-props': ['error', 'as-needed'],
-  'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
+  quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
   'rest-spread-spacing': ['error', 'never'],
-  'semi': ['error', 'never'],
+  semi: ['error', 'never'],
   'semi-spacing': ['error', { before: false, after: true }],
   'space-before-blocks': ['error', 'always'],
   'space-before-function-paren': ['error', 'always'],
   'space-in-parens': ['error', 'never'],
   'space-infix-ops': 'error',
   'space-unary-ops': ['error', { words: true, nonwords: false }],
-  'spaced-comment': ['error', 'always', { line: { markers: ['*package', '!', '/', ',', '='] }, block: { balanced: true, markers: ['*package', '!', ',', ':', '::', 'flow-include'], exceptions: ['*'] }}],
+  'spaced-comment': ['error', 'always', { line: { markers: ['*package', '!', '/', ',', '='] }, block: { balanced: true, markers: ['*package', '!', ',', ':', '::', 'flow-include'], exceptions: ['*'] } }],
   'symbol-description': 'error',
   'template-curly-spacing': ['error', 'never'],
   'template-tag-spacing': ['error', 'never'],
@@ -172,46 +172,57 @@ let rules = {
   'valid-typeof': ['error', { requireStringLiterals: true }],
   'wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
   'yield-star-spacing': ['error', 'both'],
-  'yoda': ['error', 'never'],
+  yoda: ['error', 'never']
 }
 
 // eslint-plugin-smells
 plugins.push('smells')
-rules = {...rules, ...{
-  'smells/no-switch': 2,
-  'smells/no-complex-switch-case': 2,
-  'smells/no-setinterval': 2,
-  'smells/no-this-assign': 2,
-  'smells/no-complex-string-concat': 2,
-  //'smells/no-complex-chaining': 2,
-}}
+rules = {
+  ...rules,
+  ...{
+    'smells/no-switch': 2,
+    'smells/no-complex-switch-case': 2,
+    'smells/no-setinterval': 2,
+    'smells/no-this-assign': 2,
+    'smells/no-complex-string-concat': 2
+  // 'smells/no-complex-chaining': 2,
+  }
+}
 
 // eslint-plugin-simple-import-sort
 plugins.push('simple-import-sort')
-rules = {...rules, ...{
-  'sort-imports': 0,
-  'simple-import-sort/sort': 1,
-}}
+rules = {
+  ...rules,
+  ...{
+    'sort-imports': 0
+  }
+}
 
 // eslint-plugin-prefer-object-spread
 plugins.push('prefer-object-spread')
-rules = {...rules, ...{
-  'prefer-object-spread/prefer-object-spread': 1,
-}}
+rules = {
+  ...rules,
+  ...{
+    'prefer-object-spread/prefer-object-spread': 1
+  }
+}
 
 // eslint-plugin-node
 plugins.push('node')
 extendsRulesets.push('plugin:node/recommended')
-rules = {...rules, ...{
-  'node/exports-style': ['error', 'module.exports'],
-  'node/file-extension-in-import': ['error', 'always'],
-  'node/prefer-global/buffer': ['error', 'always'],
-  'node/prefer-global/console': ['error', 'always'],
-  'node/prefer-global/process': ['error', 'always'],
-  'node/prefer-global/url-search-params': ['error', 'always'],
-  'node/prefer-global/url': ['error', 'always'],
-  'node/prefer-promises/dns': 'error',
-  'node/prefer-promises/fs': 'error'
-}}
+rules = {
+  ...rules,
+  ...{
+    'node/exports-style': ['error', 'module.exports'],
+    'node/file-extension-in-import': ['error', 'always'],
+    'node/prefer-global/buffer': ['error', 'always'],
+    'node/prefer-global/console': ['error', 'always'],
+    'node/prefer-global/process': ['error', 'always'],
+    'node/prefer-global/url-search-params': ['error', 'always'],
+    'node/prefer-global/url': ['error', 'always'],
+    'node/prefer-promises/dns': 'error',
+    'node/prefer-promises/fs': 'error'
+  }
+}
 
 module.exports = { settings, parser, parserOptions, globals, env, plugins, extends: extendsRulesets, rules }
