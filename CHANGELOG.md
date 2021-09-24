@@ -1,7 +1,8 @@
 
 # Changelog
-(NOTE: Accidentally published 3.0.0 in the past - that version can never be reused. Learned my lesson.)
 
+v4.0.0 - Upgrade node to v14 LTS
+v3.0.0 - (ACCIDENTAL PUBLISH - DON'T REUSE)
 v2.0.3 - Upgraded source-map (2/2)
 v2.0.2 - Upgraded source-map
 v2.0.1 - Upgrades Sass to v1.26.11
