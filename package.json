@@ -31,13 +31,13 @@
     "test": "echo '** TODO: Write tests! **'; echo 'Linting...'; eslint index.js --fix;"
   },
   "dependencies": {
-    "source-map": "0.7.3"
+    "source-map": "0.8.0-beta.0"
   },
   "optionalDependencies": {
-    "sass": "^1.42.1"
+    "sass": "^1.52.3"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
+    "eslint": "^8.17.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",

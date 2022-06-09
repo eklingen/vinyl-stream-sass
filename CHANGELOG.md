@@ -1,6 +1,7 @@
 
 # Changelog
 
+v4.0.2 - Upgraded dependencies + added arm64 binaries
 v4.0.1 - Upgrade dependencies
 v4.0.0 - Upgrade node to v14 LTS
 v3.0.0 - (ACCIDENTAL PUBLISH - DON'T REUSE)
