@@ -71,12 +71,6 @@ function binarySassArgs (options = {}) {
   return args
 }
 
-function sleep (ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
 function dartSassWrapper (options = {}) {
   const { SourceMapConsumer, SourceMapGenerator } = require('source-map')
   const { renderSync } = require('sass')
