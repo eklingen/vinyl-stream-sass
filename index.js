@@ -36,7 +36,7 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 
     try {
       chmod(binary, 0o744)
 
-      const child = exec(`${binary} ${binary.replace('/dart', '/sass.dart.snapshot')} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => err ? reject(stderr) : resolve(stdout))
+      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => err ? reject(stderr) : resolve(stdout))
       child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
 
       const stdin = new Readable({ encoding, maxBuffer })
@@ -71,6 +71,12 @@ function binarySassArgs (options = {}) {
   return args
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 function dartSassWrapper (options = {}) {
   const { SourceMapConsumer, SourceMapGenerator } = require('source-map')
   const { renderSync } = require('sass')
@@ -95,7 +101,8 @@ function dartSassWrapper (options = {}) {
 
     try {
       if (options.tryBinary) {
-        const data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })])).toString('utf-8')
+        let data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })]))
+        data = data.toString('utf-8')
 
         if (data) {
           const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
