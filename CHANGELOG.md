@@ -1,6 +1,9 @@
 
 # Changelog
 
+v5.0.0 - Removed binary sass option.
+         It only gives a slight speedbump and wasn't working correctly in some cases.
+         Removing it also greatly decreases the size of this package.
 v4.0.5 - DevEnv changes
 v4.0.4 - Upgrade dependencies
 v4.0.3 - Fixed bug with calling the binaries

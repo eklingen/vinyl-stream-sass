@@ -802,15 +802,15 @@ __metadata:
   linkType: hard
 
 "sass@npm:^1.62.1":
-  version: 1.62.1
-  resolution: "sass@npm:1.62.1"
+  version: 1.69.7
+  resolution: "sass@npm:1.69.7"
   dependencies:
     chokidar: "npm:>=3.0.0 <4.0.0"
     immutable: "npm:^4.0.0"
     source-map-js: "npm:>=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 4e9f3db604b4a9d50bc0986b1a748cff1986d8545d744c06cac2357057817c8951c605a06f6742df7cc47f98cdb9801cbfa819f3337e7c9a70be2ab1f7d5b343
+  checksum: 9c6d3fe468a267949e8dd766085351f59988caf5d3d5c13eb041d370366f869ad3704b5046586fd3584b2cbf59c03650d237b62a4c6ed26a0c003e27f9ef4e89
   languageName: node
   linkType: hard
 
