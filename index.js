@@ -1,22 +1,10 @@
 // Small vinyl-stream wrapper - aka Gulp plugin - for sass (dart-sass).
 // Fully supports source maps.
-//
-// For more speed (faster then libsassc in most cases!), it tries to use a binary.
-// If it can't find one, or it doesn't work, it will try the `sass` javascript package.
-// You can disable this behavior by setting `options.tryBinary: false`.
-// Note: Due to async overhead, this might be slower on small files.
 
-const { chmod } = require('fs').promises
 const { basename, dirname, extname, join, relative } = require('path')
-const { exec } = require('child_process')
-const { platform, arch } = require('os')
-const { Transform, Readable } = require('stream')
-
-const sassBinary = join(module.path, `/vendor/sass/${platform()}-${arch()}/sass`)
+const { Transform } = require('stream')
 
 const DEFAULT_OPTIONS = {
-  tryBinary: true,
-
   sass: {
     outputStyle: 'compressed', // or 'extended'
     charset: true,
@@ -25,50 +13,6 @@ const DEFAULT_OPTIONS = {
     sourceMapContents: true,
     includePaths: [],
   },
-}
-
-async function runBinary(buffer, binary = '', args = [], maxBuffer = 16 * 1024 * 1024, encoding = null) {
-  if (!binary) {
-    return
-  }
-
-  return new Promise((resolve, reject) => {
-    try {
-      chmod(binary, 0o744)
-
-      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => (err ? reject(stderr) : resolve(stdout)))
-      child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
-
-      const stdin = new Readable({ encoding, maxBuffer })
-      stdin.push(buffer)
-      stdin.push(null)
-      stdin.pipe(child.stdin)
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
-function binarySassArgs(options = {}) {
-  const args = ['--stdin']
-
-  options.includePaths.forEach(path => args.push(`--load-path="${path}"`))
-
-  args.push(`--style="${options.outputStyle}"`)
-  args.push(options.charset ? '--charset' : '--no-charset')
-  args.push(options.errorCss ? '--error-css' : '--no-error-css')
-
-  if (options.sourceMap) {
-    args.push('--source-map')
-    args.push('--embed-source-map')
-    args.push('--source-map-urls="absolute"')
-  }
-
-  if (options.sourceMapContents) {
-    args.push('--embed-sources')
-  }
-
-  return args
 }
 
 function dartSassWrapper(options = {}) {
@@ -93,40 +37,12 @@ function dartSassWrapper(options = {}) {
 
     let result = {}
 
+    options.sass = { ...options.sass, data: file.contents.toString(), file: file.path, outFile: options.sass.sourceMap ? 'main.css' : false }
+
     try {
-      if (options.tryBinary) {
-        let data = await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })])
-        data = data.toString('utf-8')
-
-        if (data) {
-          const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
-
-          if (~index) {
-            const [, , inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)(\*\/[\s\s]*)$)/i.exec(data)
-
-            result.css = Buffer.from(data.substr(0, index).trimEnd())
-            result.map = Buffer.from(decodeURIComponent(inner))
-          } else {
-            result.css = Buffer.from(data)
-          }
-        }
-      }
+      result = renderSync(options.sass)
     } catch (error) {
-      error.relativePath = relative(process.cwd(), (error.file === 'stdin' ? file.path : error.file) || file.path)
-      error.message = `Error in ${error.relativePath}:\n${error.message}`
-      error.formatted = `\x1b[31m${error.message}\x1b[0m`
-
-      return callback(new Error(error))
-    }
-
-    if (!result.css) {
-      options.sass = { ...options.sass, data: file.contents.toString(), file: file.path, outFile: options.sass.sourceMap ? 'main.css' : false }
-
-      try {
-        result = renderSync(options.sass)
-      } catch (error) {
-        return callback(error)
-      }
+      return callback(error)
     }
 
     if (!result.css) {
