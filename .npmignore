@@ -1,9 +1,10 @@
 
 .editorconfig
-.eslintrc.js
 .gitignore
 .node-version
+.prettierrc
+.yarnrc.yml
 yarn.lock
-.yarnclean
 tests/
+.yarn/
 TODO.md

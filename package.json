@@ -25,22 +25,16 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=20.9.0"
   },
+  "packageManager": "yarn@4.0.2",
   "scripts": {
-    "test": "echo '** TODO: Write tests! **'; echo 'Linting...'; eslint index.js --fix;"
+    "test": "echo '** TODO: Write tests! **';"
   },
   "dependencies": {
     "source-map": "0.8.0-beta.0"
   },
   "optionalDependencies": {
     "sass": "^1.62.1"
-  },
-  "devDependencies": {
-    "eslint": "^8.17.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prefer-object-spread": "^1.2.1",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
-    "eslint-plugin-smells": "^1.0.1"
   }
 }

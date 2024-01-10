@@ -1,6 +1,7 @@
 
 # Changelog
 
+v4.0.5 - DevEnv changes
 v4.0.4 - Upgrade dependencies
 v4.0.3 - Fixed bug with calling the binaries
 v4.0.2 - Upgraded dependencies + added arm64 binaries

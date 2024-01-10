@@ -23,11 +23,11 @@ const DEFAULT_OPTIONS = {
     errorCss: true,
     sourceMap: true,
     sourceMapContents: true,
-    includePaths: []
-  }
+    includePaths: [],
+  },
 }
 
-async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 * 1024, encoding = null) {
+async function runBinary(buffer, binary = '', args = [], maxBuffer = 16 * 1024 * 1024, encoding = null) {
   if (!binary) {
     return
   }
@@ -36,7 +36,7 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 
     try {
       chmod(binary, 0o744)
 
-      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => err ? reject(stderr) : resolve(stdout))
+      const child = exec(`${binary} ${args.join(' ')}`, { encoding, maxBuffer, windowsHide: true }, (err, stdout, stderr) => (err ? reject(stderr) : resolve(stdout)))
       child.stdin.on('error', error => console.log('Could not pipe to executable. Try to `chmod +x` it.') && console.log(error))
 
       const stdin = new Readable({ encoding, maxBuffer })
@@ -49,7 +49,7 @@ async function runBinary (buffer, binary = '', args = [], maxBuffer = 16 * 1024 
   })
 }
 
-function binarySassArgs (options = {}) {
+function binarySassArgs(options = {}) {
   const args = ['--stdin']
 
   options.includePaths.forEach(path => args.push(`--load-path="${path}"`))
@@ -71,7 +71,7 @@ function binarySassArgs (options = {}) {
   return args
 }
 
-function dartSassWrapper (options = {}) {
+function dartSassWrapper(options = {}) {
   const { SourceMapConsumer, SourceMapGenerator } = require('source-map')
   const { renderSync } = require('sass')
 
@@ -79,7 +79,7 @@ function dartSassWrapper (options = {}) {
   options.sass = { ...DEFAULT_OPTIONS.sass, ...options.sass }
   options.sass.includePaths = [...DEFAULT_OPTIONS.sass.includePaths, ...options.sass.includePaths]
 
-  async function transform (file, encoding, callback) {
+  async function transform(file, encoding, callback) {
     if (basename(file.path).indexOf('_') === 0) {
       return callback() // Sass convention says files beginning with an underscore should be used via @import only, so remove the file from the stream
     }
@@ -95,14 +95,14 @@ function dartSassWrapper (options = {}) {
 
     try {
       if (options.tryBinary) {
-        let data = (await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })]))
+        let data = await runBinary(file.contents, sassBinary, [...binarySassArgs({ ...options.sass })])
         data = data.toString('utf-8')
 
         if (data) {
           const index = data.search(/\/[/*][#@]\s+sourceMappingURL=data:(.*)/i)
 
           if (~index) {
-            const [,, inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)(\*\/[\s\s]*)$)/i.exec(data)
+            const [, , inner] = /(\/\*+[\s\S]*?sourceMappingURL\s*=[\s\S]*?,([\s\S]*?)(\*\/[\s\s]*)$)/i.exec(data)
 
             result.css = Buffer.from(data.substr(0, index).trimEnd())
             result.map = Buffer.from(decodeURIComponent(inner))
@@ -136,7 +136,7 @@ function dartSassWrapper (options = {}) {
     if (result.map) {
       const sourceMap = JSON.parse(result.map.toString('utf8'))
 
-      sourceMap.sources = sourceMap.sources.map((source, index) => ~source.indexOf('file://') ? relative(file.base, source.substr(7)) : source) // Convert absolute to relative paths
+      sourceMap.sources = sourceMap.sources.map((source, index) => (~source.indexOf('file://') ? relative(file.base, source.substr(7)) : source)) // Convert absolute to relative paths
       sourceMap.file = join(dirname(file.relative), basename(file.relative, extname(file.relative)) + '.css')
 
       if (file.sourceMap && (typeof file.sourceMap === 'string' || file.sourceMap instanceof String)) {
