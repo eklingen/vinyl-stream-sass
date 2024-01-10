@@ -9,7 +9,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@eklingen/vinyl-stream-sass@workspace:."
   dependencies:
-    sass: "npm:^1.62.1"
+    sass: "npm:^1.69.7"
     source-map: "npm:0.8.0-beta.0"
   dependenciesMeta:
     sass:
@@ -801,7 +801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.62.1":
+"sass@npm:^1.69.7":
   version: 1.69.7
   resolution: "sass@npm:1.69.7"
   dependencies:

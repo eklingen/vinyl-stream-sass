@@ -35,6 +35,6 @@
     "source-map": "0.8.0-beta.0"
   },
   "optionalDependencies": {
-    "sass": "^1.62.1"
+    "sass": "^1.69.7"
   }
 }

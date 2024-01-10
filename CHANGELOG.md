@@ -1,6 +1,7 @@
 
 # Changelog
 
+v5.0.1 - Bumped sass dependency
 v5.0.0 - Removed binary sass option.
          It only gives a slight speedbump and wasn't working correctly in some cases.
          Removing it also greatly decreases the size of this package.
