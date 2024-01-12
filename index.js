@@ -1,4 +1,4 @@
-// Small vinyl-stream wrapper - aka Gulp plugin - for sass (dart-sass).
+// Small vinyl-stream wrapper - aka Gulp plugin - for sass (dart-sass, or sass-embedded to be more specific).
 // Fully supports source maps.
 
 const { basename, dirname, extname, join, relative } = require('path')
@@ -6,18 +6,27 @@ const { Transform } = require('stream')
 
 const DEFAULT_OPTIONS = {
   sass: {
-    outputStyle: 'compressed', // or 'extended'
+    outputStyle: 'compressed', // or 'expanded'
     charset: true,
-    errorCss: true,
+    // errorCss: true, // NOTE: NO LONGER RELEVANT
     sourceMap: true,
-    sourceMapContents: true,
-    includePaths: [],
+    sourceMapIncludeSources: true, // NOTE: NEW
+    // sourceMapContents: true, // NOTE: NO LONGER RELEVANT
+    includePaths: [process.cwd() + '/node_modules'],
+    loadPaths: [process.cwd() + '/node_modules'],
+    functions: {},
+    importers: [],
+    alertAscii: false,
+    alertColor: true,
+    logger: null,
+    quietDeps: false,
+    verbose: true,
   },
 }
 
 function dartSassWrapper(options = {}) {
   const { SourceMapConsumer, SourceMapGenerator } = require('source-map')
-  const { renderSync } = require('sass')
+  const { render, renderSync, compileString, compileStringAsync, compile, compileAsync } = require('sass-embedded')
 
   options = { ...DEFAULT_OPTIONS, ...options }
   options.sass = { ...DEFAULT_OPTIONS.sass, ...options.sass }
@@ -34,13 +43,14 @@ function dartSassWrapper(options = {}) {
     }
 
     options.sass.includePaths.unshift(dirname(file.path))
+    options.sass.loadPaths.unshift(dirname(file.path))
 
     let result = {}
 
     options.sass = { ...options.sass, data: file.contents.toString(), file: file.path, outFile: options.sass.sourceMap ? 'main.css' : false }
 
     try {
-      result = renderSync(options.sass)
+      result = await compileStringAsync(file.contents.toString(), options.sass)
     } catch (error) {
       return callback(error)
     }

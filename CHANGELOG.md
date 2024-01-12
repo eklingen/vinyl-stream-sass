@@ -1,6 +1,7 @@
 
 # Changelog
 
+v6.0.0 - Changed from `sass` to `sass-embedded` for a speedup (uses binary under the hood)
 v5.0.2 - Fixed a mistake - continue remove binary option.
 v5.0.1 - Bumped sass dependency
 v5.0.0 - Removed binary sass option.
